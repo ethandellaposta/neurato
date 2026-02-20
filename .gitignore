@@ -1,0 +1,31 @@
+# Build directories
+build/
+cmake-build-*/
+
+# IDE files
+.idea/
+.vscode/
+*.xcodeproj
+*.xcworkspace
+*.sln
+*.vcxproj*
+.vs/
+
+# Compiled objects
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Compile commands
+compile_commands.json
+
+# Windsurf AI context cache
+.windsurf/context-cache/

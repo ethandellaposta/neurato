@@ -1,0 +1,131 @@
+{
+    "folders": [
+        {
+            "name": "Neurato DAW",
+            "path": ".",
+        },
+    ],
+    "settings": {
+        "cmake.configureOnOpen": true,
+        "cmake.buildDirectory": "${workspaceFolder}/build/${buildType}",
+        "cmake.generator": "Ninja",
+        "cmake.defaultVariants": {
+            "buildType": {
+                "default": "debug",
+                "description": "Build type",
+                "choices": {
+                    "debug": {
+                        "short": "Debug",
+                        "long": "Debug build",
+                        "buildType": "Debug",
+                    },
+                    "release": {
+                        "short": "Release",
+                        "long": "Release build",
+                        "buildType": "Release",
+                    },
+                    "relwithdebinfo": {
+                        "short": "RelWithDebInfo",
+                        "long": "Release with debug info",
+                        "buildType": "RelWithDebInfo",
+                    },
+                },
+            },
+        },
+        "files.exclude": {
+            "**/build": false,
+            "**/.git": true,
+            "**/.vscode": true,
+            "**/node_modules": true,
+            "**/*.dSYM": true,
+        },
+        "search.exclude": {
+            "**/build": true,
+            "**/.git": true,
+            "**/.vscode": true,
+            "**/node_modules": true,
+            "**/*.dSYM": true,
+        },
+    },
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "Debug Neurato",
+                "type": "cppdbg",
+                "request": "launch",
+                "program": "${workspaceFolder}/build/debug/Neurato_artefacts/Debug/Neurato.app/Contents/MacOS/Neurato",
+                "args": [],
+                "stopAtEntry": false,
+                "cwd": "${workspaceFolder}",
+                "environment": [],
+                "externalConsole": false,
+                "MIMode": "lldb",
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for lldb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true,
+                    },
+                ],
+                "preLaunchTask": "Build Debug",
+                "miDebuggerPath": "/usr/bin/lldb",
+            },
+        ],
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Quick Build",
+                "type": "cmake",
+                "command": "build",
+                "targets": ["all"],
+                "preset": "${command:cmake.activeBuildPresetName}",
+                "group": {
+                    "kind": "build",
+                    "isDefault": true,
+                },
+                "problemMatcher": ["$gcc"],
+                "detail": "Quick build using active preset",
+            },
+            {
+                "label": "Run App",
+                "type": "shell",
+                "command": "${workspaceFolder}/build/${command:cmake.activeBuildPresetName}/Neurato_artefacts/${command:cmake.activeBuildPresetName}/Neurato.app/Contents/MacOS/Neurato",
+                "args": [],
+                "group": {
+                    "kind": "test",
+                    "isDefault": true,
+                },
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "new",
+                },
+                "problemMatcher": [],
+                "detail": "Run the current build of Neurato",
+            },
+        ],
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-vscode.cpptools",
+            "ms-vscode.cmake-tools",
+            "ms-vscode.cpptools-extension-pack",
+            "twxs.cmake",
+            "ms-vscode.hexeditor",
+            "vadimcn.vscode-lldb",
+            "ms-vscode.makefile-tools",
+            "esbenp.prettier-vscode",
+            "ms-vscode.vscode-json",
+            "redhat.vscode-yaml",
+            "eamodio.gitlens",
+            "streetsidesoftware.code-spell-checker",
+            "zhuangtongfa.material-theme",
+            "PKief.material-icon-theme",
+            "ms-vscode.vscode-themes",
+        ],
+    },
+}

@@ -1,0 +1,10 @@
+{
+  "current_version": "1.0.0",
+  "api_version": "1.0.0",
+  "last_updated": "2026-02-20T10:55:06.919793",
+  "compatibility_rules": {
+    "major_breaking": true,
+    "minor_additive": true,
+    "patch_fixes": true
+  }
+}
