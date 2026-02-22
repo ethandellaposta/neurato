@@ -3,10 +3,9 @@
 #include <juce_core/juce_core.h>
 #include <memory>
 #include <string>
+#include "../model/Session.h"
 
 namespace neurato {
-
-class Session;
 
 // Base class for all undoable commands.
 // Each command captures enough state to undo/redo itself.

@@ -47,14 +47,14 @@ void PluginManager::scanForPlugins(const juce::FileSearchPath& searchPaths)
 {
     if (isScanning)
         return;
-    
+
     isScanning = true;
-    
+
     // Run scanning on background thread
     scannerThread.runTask([this, searchPaths]()
     {
         juce::DeadMansPedal dmp;
-        
+
         for (auto* format : allFormats)
         {
             if (format)
@@ -62,10 +62,10 @@ void PluginManager::scanForPlugins(const juce::FileSearchPath& searchPaths)
                 format->findAllPluginsForFile(searchPaths, knownPlugins, dmp);
             }
         }
-        
+
         // Sort and deduplicate
         knownPlugins.sortAlphabetically([], true);
-        
+
         isScanning = false;
     });
 }
@@ -74,9 +74,9 @@ void PluginManager::refreshPluginList()
 {
     // Clear and rescan default locations
     knownPlugins.clear();
-    
+
     juce::FileSearchPath defaultSearchPaths;
-    
+
 #if JUCE_MAC
     defaultSearchPaths.add(juce::File("~/Library/Audio/Plug-Ins/VST3"));
     defaultSearchPaths.add(juce::File("/Library/Audio/Plug-Ins/VST3"));
@@ -92,14 +92,14 @@ void PluginManager::refreshPluginList()
     defaultSearchPaths.add(juce::File("/usr/lib/vst3"));
     defaultSearchPaths.add(juce::File("/usr/local/lib/vst3"));
 #endif
-    
+
     scanForPlugins(defaultSearchPaths);
 }
 
 std::vector<PluginManager::PluginInfo> PluginManager::getAvailablePlugins() const
 {
     std::vector<PluginInfo> plugins;
-    
+
     for (int i = 0; i < knownPlugins.getNumTypes(); ++i)
     {
         auto* desc = knownPlugins.getType(i);
@@ -111,11 +111,11 @@ std::vector<PluginManager::PluginInfo> PluginManager::getAvailablePlugins() cons
             info.isInstrument = desc->isInstrument;
             info.isEffect = desc->isInstrument == false;
             info.category = desc->category;
-            
+
             plugins.push_back(info);
         }
     }
-    
+
     return plugins;
 }
 
@@ -123,7 +123,7 @@ std::vector<PluginManager::PluginInfo> PluginManager::getInstruments() const
 {
     auto all = getAvailablePlugins();
     std::vector<PluginInfo> instruments;
-    
+
     for (const auto& plugin : all)
     {
         if (plugin.isInstrument)
@@ -131,7 +131,7 @@ std::vector<PluginManager::PluginInfo> PluginManager::getInstruments() const
             instruments.push_back(plugin);
         }
     }
-    
+
     return instruments;
 }
 
@@ -139,7 +139,7 @@ std::vector<PluginManager::PluginInfo> PluginManager::getEffects() const
 {
     auto all = getAvailablePlugins();
     std::vector<PluginInfo> effects;
-    
+
     for (const auto& plugin : all)
     {
         if (plugin.isEffect)
@@ -147,7 +147,7 @@ std::vector<PluginManager::PluginInfo> PluginManager::getEffects() const
             effects.push_back(plugin);
         }
     }
-    
+
     return effects;
 }
 
@@ -160,13 +160,13 @@ std::unique_ptr<PluginManager::LoadedPlugin> PluginManager::loadPlugin(const juc
         juce::Logger::writeToLog("Plugin not found: " + pluginId);
         return nullptr;
     }
-    
+
     if (!isPluginCompatible(desc))
     {
         juce::Logger::writeToLog("Plugin not compatible: " + pluginId);
         return nullptr;
     }
-    
+
     // Find appropriate format
     juce::AudioPluginFormat* format = nullptr;
     for (auto* f : allFormats)
@@ -177,36 +177,36 @@ std::unique_ptr<PluginManager::LoadedPlugin> PluginManager::loadPlugin(const juc
             break;
         }
     }
-    
+
     if (!format)
     {
         juce::Logger::writeToLog("No format for plugin: " + pluginId);
         return nullptr;
     }
-    
+
     // Create plugin instance
     auto instance = std::unique_ptr<juce::AudioPluginInstance>(
         format->createInstanceFromDescription(desc, 44100.0, 512));
-    
+
     if (!instance)
     {
         juce::Logger::writeToLog("Failed to create plugin instance: " + pluginId);
         return nullptr;
     }
-    
+
     // Prepare plugin
     instance->prepareToPlay(44100.0, 512);
     instance->setPlayConfigDetails(512, 44100.0, 2, 2);
-    
+
     // Wrap in LoadedPlugin
     auto loaded = std::make_unique<LoadedPlugin>();
     loaded->instance = std::move(instance);
     loaded->pluginId = pluginId;
     loaded->isActive = false;
-    
+
     // Store in map
-    loadedPlugins[pluginId] = std::make_unique<LoadedPlugin>(*loaded);
-    
+    loadedPlugins[pluginId] = std::move(loaded);
+
     juce::Logger::writeToLog("Loaded plugin: " + desc.name);
     return loaded;
 }
@@ -220,13 +220,13 @@ void PluginManager::unloadPlugin(const juce::String& pluginId)
         {
             it->second->instance->releaseResources();
         }
-        
+
         // Clear from atomic pointer if it's the default piano
         if (pluginId == getDefaultPianoId())
         {
             defaultPianoPlugin.store(nullptr);
         }
-        
+
         loadedPlugins.erase(it);
         juce::Logger::writeToLog("Unloaded plugin: " + pluginId);
     }
@@ -251,7 +251,7 @@ void PluginManager::createDefaultPiano()
 {
     // For now, we'll use the existing sine synth as the default piano
     // Later we can replace this with a sampled piano
-    
+
     // Create a special entry for the default piano
     juce::PluginDescription desc;
     desc.name = "Neurato Piano";
@@ -262,10 +262,10 @@ void PluginManager::createDefaultPiano()
     desc.isInstrument = true;
     desc.manufacturerName = "Neurato";
     desc.pluginIdentifierCode = "neurato.piano";
-    
+
     // Add to known plugins
     knownPlugins.addType(desc);
-    
+
     juce::Logger::writeToLog("Created default piano instrument");
 }
 

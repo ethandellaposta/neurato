@@ -31,18 +31,53 @@ void AudioEngine::shutdown()
 
 // --- UI thread: send commands ---
 
-void AudioEngine::sendPlay()
+void AudioEngine::sendMessage(UIToAudioMessage::Type type)
 {
     UIToAudioMessage msg;
-    msg.type = UIToAudioMessage::Type::Play;
+    msg.type = type;
     uiToAudioQueue_.tryPush(msg);
+}
+
+void AudioEngine::sendMessageWithValue(UIToAudioMessage::Type type, double value)
+{
+    UIToAudioMessage msg;
+    msg.type = type;
+    msg.doubleValue = value;
+    uiToAudioQueue_.tryPush(msg);
+}
+
+void AudioEngine::sendMessageWithValue(UIToAudioMessage::Type type, int value)
+{
+    UIToAudioMessage msg;
+    msg.type = type;
+    msg.intValue = value;
+    uiToAudioQueue_.tryPush(msg);
+}
+
+void AudioEngine::sendMessageWithValue(UIToAudioMessage::Type type, bool value)
+{
+    UIToAudioMessage msg;
+    msg.type = type;
+    msg.boolValue = value;
+    uiToAudioQueue_.tryPush(msg);
+}
+
+void AudioEngine::sendMessageWithValue(UIToAudioMessage::Type type, float value)
+{
+    UIToAudioMessage msg;
+    msg.type = type;
+    msg.floatValue = value;
+    uiToAudioQueue_.tryPush(msg);
+}
+
+void AudioEngine::sendPlay()
+{
+    sendMessage(UIToAudioMessage::Type::Play);
 }
 
 void AudioEngine::sendStop()
 {
-    UIToAudioMessage msg;
-    msg.type = UIToAudioMessage::Type::Stop;
-    uiToAudioQueue_.tryPush(msg);
+    sendMessage(UIToAudioMessage::Type::Stop);
 }
 
 void AudioEngine::sendTogglePlayStop()
@@ -55,50 +90,32 @@ void AudioEngine::sendTogglePlayStop()
 
 void AudioEngine::sendSetBpm(double bpm)
 {
-    UIToAudioMessage msg;
-    msg.type = UIToAudioMessage::Type::SetBpm;
-    msg.doubleValue = bpm;
-    uiToAudioQueue_.tryPush(msg);
+    sendMessageWithValue(UIToAudioMessage::Type::SetBpm, bpm);
 }
 
 void AudioEngine::sendSeek(SampleCount position)
 {
-    UIToAudioMessage msg;
-    msg.type = UIToAudioMessage::Type::Seek;
-    msg.intValue = position;
-    uiToAudioQueue_.tryPush(msg);
+    sendMessageWithValue(UIToAudioMessage::Type::Seek, static_cast<int>(position));
 }
 
 void AudioEngine::sendSetMetronomeEnabled(bool enabled)
 {
-    UIToAudioMessage msg;
-    msg.type = UIToAudioMessage::Type::SetMetronomeEnabled;
-    msg.boolValue = enabled;
-    uiToAudioQueue_.tryPush(msg);
+    sendMessageWithValue(UIToAudioMessage::Type::SetMetronomeEnabled, enabled);
 }
 
 void AudioEngine::sendSetMetronomeGain(float gain)
 {
-    UIToAudioMessage msg;
-    msg.type = UIToAudioMessage::Type::SetMetronomeGain;
-    msg.floatValue = gain;
-    uiToAudioQueue_.tryPush(msg);
+    sendMessageWithValue(UIToAudioMessage::Type::SetMetronomeGain, gain);
 }
 
 void AudioEngine::sendSetTrackGain(float gain)
 {
-    UIToAudioMessage msg;
-    msg.type = UIToAudioMessage::Type::SetTrackGain;
-    msg.floatValue = gain;
-    uiToAudioQueue_.tryPush(msg);
+    sendMessageWithValue(UIToAudioMessage::Type::SetTrackGain, gain);
 }
 
 void AudioEngine::sendSetTrackMute(bool mute)
 {
-    UIToAudioMessage msg;
-    msg.type = UIToAudioMessage::Type::SetTrackMute;
-    msg.boolValue = mute;
-    uiToAudioQueue_.tryPush(msg);
+    sendMessageWithValue(UIToAudioMessage::Type::SetTrackMute, mute);
 }
 
 std::optional<AudioToUIMessage> AudioEngine::pollAudioMessage()

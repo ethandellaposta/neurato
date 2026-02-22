@@ -1,12 +1,11 @@
 #pragma once
 
 #include "commands/Command.h"
+#include "../model/Session.h"
 #include <vector>
 #include <functional>
 
 namespace neurato {
-
-class Session;
 
 // Manages the undo/redo stack. All session mutations go through here.
 class CommandManager

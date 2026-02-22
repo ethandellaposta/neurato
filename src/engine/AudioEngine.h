@@ -66,6 +66,15 @@ public:
     void shutdown();
 
     // UI thread: send commands to audio thread
+private:
+    // Helper functions for message sending
+    void sendMessage(UIToAudioMessage::Type type);
+    void sendMessageWithValue(UIToAudioMessage::Type type, double value);
+    void sendMessageWithValue(UIToAudioMessage::Type type, int value);
+    void sendMessageWithValue(UIToAudioMessage::Type type, bool value);
+    void sendMessageWithValue(UIToAudioMessage::Type type, float value);
+
+public:
     void sendPlay();
     void sendStop();
     void sendTogglePlayStop();

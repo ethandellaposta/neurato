@@ -29,3 +29,8 @@ compile_commands.json
 
 # Windsurf AI context cache
 .windsurf/context-cache/
+
+# Test reports
+test_report.json
+
+node_modules

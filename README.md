@@ -4,7 +4,7 @@ A native, cross-platform, ultra-performant DAW with AI as a first-class workflow
 
 **Not Electron. Not a web app. Native C++20 with JUCE.**
 
-## Current Status: Milestone 4.5 — MIDI Tracks & UI Modernization
+## Current Status: Milestone 7 Complete + Logic Pro X Features
 
 ### Milestone 1 ✅ Audio Host Skeleton
 
@@ -20,7 +20,7 @@ A native, cross-platform, ultra-performant DAW with AI as a first-class workflow
 
 - Project file format (.neurato JSON + relative audio asset paths)
 - Save / Save As / Open with versioning
-- Offline bounce (faster-than-realtime WAV export) with progress dialog
+- Offline bounce (faster-than-realtime) WAV export with progress dialog
 - Recent projects list, audio file browser, file/view menus
 - Window title with project name + unsaved changes indicator
 
@@ -45,6 +45,68 @@ A native, cross-platform, ultra-performant DAW with AI as a first-class workflow
 - ✅ Double-click clips to open editors, Escape to close
 - ✅ Project serialization v2: MIDI tracks/clips/notes saved and loaded (backward-compatible)
 
+### Milestone 5 ✅ Audio Graph & Automation
+
+- ✅ Audio processing graph with nodes + edges
+- ✅ Latency compensation (PDC) with automatic delay line insertion
+- ✅ Automation lanes with sample-accurate breakpoint editing
+- ✅ Built-in processors: gain, 4-band parametric EQ, compressor
+- ✅ Real-time parameter smoothing and automation interpolation
+- ✅ Graph validation and topological sorting for processing order
+
+### Milestone 6 ✅ Plugin Hosting
+
+- ✅ VST3 scanner + loader with plugin database management
+- ✅ AU scanner + loader (macOS) with component validation
+- ✅ Sandboxed plugin hosting with crash isolation and IPC communication
+- ✅ Plugin state serialization (chunk and parameter formats)
+- ✅ Plugin parameter automation with lane mapping
+- ✅ Real-time plugin processing with bypass and parameter control
+
+### Milestone 7 ✅ AI Layer v1 (the flagship feature)
+
+- ✅ Session State API: structured snapshot of entire session with audio analysis
+- ✅ Action DSL: typed edit operations with automatic inverse generation
+- ✅ Command palette UI with natural language input and AI-powered suggestions
+- ✅ Planner module: NL → DSL actions with confidence scoring
+- ✅ Preview/diff UI for AI-proposed edits with before/after comparison
+- ✅ Local inference runtime with support for multiple model architectures
+- ✅ Mix assistant v1: gain staging + EQ suggestions with learning system
+- ✅ Transient detection + beat grid with tempo estimation
+- ✅ End-to-end test suite with performance benchmarks and stress testing
+
+### 🎛️ Logic Pro X-Style Features
+
+#### Professional Mixer
+
+- **Advanced Channel Strips**: 15 plugin slots, 8 sends per channel, VCA assignment, phase inversion, trim gain
+- **Smart Controls**: Map multiple parameters to single controls with custom curves and ranges
+- **Bus Routing**: Create unlimited buses with flexible routing and send/return options
+- **VCA Groups**: Group multiple tracks under VCA faders for unified control
+- **Environment**: Advanced routing matrix with buses, VCAs, and track assignments
+
+#### Track Types & Features
+
+- **Multiple Track Types**: Audio, Instrument, Drum Machine, External, Output, Master, Bus, Input, Aux, VCA, Folder Stack
+- **Track Alternatives**: Multiple takes and comping with edit points
+- **Flex Time**: Advanced time stretching with multiple modes (monophonic, polyphonic, rhythmic, slicing, speed)
+- **Step Sequencer**: Built-in drum machine with pattern editing and real-time recording
+- **Score Editor**: MIDI notation with quantization, transposition, and import/export
+
+#### Advanced Automation
+
+- **Sample-Accurate Automation**: Breakpoint editing with curve interpolation
+- **Parameter Mapping**: Automate any plugin parameter, send level, or mixer control
+- **Smart Automation**: AI-assisted automation generation from audio analysis
+- **Automation Lanes**: Unlimited lanes per track with independent curves
+
+#### Professional Workflow
+
+- **Command Palette**: Natural language commands with AI-powered suggestions
+- **Channel Strip Editor**: Detailed parameter editing with plugin chain management
+- **Mixer Toolbar**: Quick access to view options, track creation, and zoom controls
+- **Real-Time Meters**: Peak, RMS, and LUFS metering with customizable ballistics
+
 ## Build Instructions
 
 ### Prerequisites
@@ -52,6 +114,7 @@ A native, cross-platform, ultra-performant DAW with AI as a first-class workflow
 - **CMake** ≥ 3.22
 - **C++20 compiler**: Clang 14+, GCC 12+, or MSVC 2022+
 - **Git** (for fetching JUCE)
+- **Optional AI Dependencies**: ONNX Runtime, llama.cpp (for local inference)
 
 #### macOS
 
@@ -86,22 +149,69 @@ cmake --build build/debug
 # Or Release:
 cmake --preset release
 cmake --build build/release
+
+# Run tests (if enabled)
+ctest --test-dir build/debug --output-on-failure
 ```
 
 ### Run
 
+#### macOS
+
 ```bash
-# macOS
 open build/debug/Neurato_artefacts/Debug/Neurato.app
+```
 
-# Linux
+#### Linux
+
+```bash
 ./build/debug/Neurato_artefacts/Debug/Neurato
+```
 
-# Windows
+#### Windows
+
+```bash
 build\debug\Neurato_artefacts\Debug\Neurato.exe
 ```
 
-### Keyboard Shortcuts
+## AI Features
+
+Neurato includes a comprehensive AI layer that enhances the audio production workflow:
+
+### Command Palette
+
+Press `Cmd+Shift+P` (or `Ctrl+Shift+P` on Windows/Linux) to open the command palette:
+
+- **Natural Language Commands**: Type "create a new track" or "add reverb to vocals"
+- **AI Suggestions**: Get context-aware suggestions based on your session
+- **Traditional Commands**: Access all menu items and keyboard shortcuts
+
+### Mix Assistant
+
+The AI-powered mix assistant helps you achieve professional-sounding mixes:
+
+- **Automatic Gain Staging**: Suggests optimal track levels for target LUFS
+- **EQ Recommendations**: Analyzes frequency content and suggests EQ adjustments
+- **Dynamic Range Control**: Recommends compression settings based on audio analysis
+- **Learning System**: Adapts to your mixing preferences over time
+
+### Automation & Analysis
+
+- **Smart Automation**: Generate automation curves from audio analysis
+- **Transient Detection**: Automatically detect transients for beat grid alignment
+- **Audio Analysis**: RMS, peak, spectral analysis, and more
+- **Preview System**: See AI suggestions before applying them
+
+### Local Inference
+
+All AI processing runs locally on your machine:
+
+- **Privacy**: No audio data leaves your computer
+- **Offline Capability**: Works without internet connection
+- **Custom Models**: Support for ONNX, llama.cpp, and custom models
+- **Performance**: Optimized for real-time audio processing
+
+## Keyboard Shortcuts
 
 | Key           | Action        |
 | ------------- | ------------- |

@@ -25,7 +25,7 @@ public:
         float envelope = 0.0f;
         float envelopePhase = 0.0f;
         float sampleRate = 44100.0f;
-        
+
         // Sample playback
         const float* sampleData = nullptr;
         int sampleLength = 0;
@@ -36,17 +36,17 @@ public:
 public:
     PianoSynth();
     ~PianoSynth();
-    
+
     // Initialize with sample rate
     void prepare(float sampleRate);
-    
+
     // Note events (RT-safe)
     void noteOn(int noteNumber, float velocity);
     void noteOff(int noteNumber);
-    
+
     // Audio processing (RT-safe)
     void render(float* leftOut, float* rightOut, int numSamples);
-    
+
     // Load piano sample (UI thread only)
     bool loadPianoSample(const juce::File& sampleFile);
     void generateDefaultPianoSample();
@@ -55,26 +55,28 @@ private:
     static constexpr int MAX_VOICES = 32;
     static constexpr int DEFAULT_SAMPLE_RATE = 44100;
     static constexpr int PITCH_BEND_RANGE = 2; // semitones
-    
+
     std::vector<Voice> voices_;
     std::unordered_map<int, int> activeNotes_; // note -> voice index
-    
+
     // Piano sample data
     std::vector<float> pianoSample_;
     float sampleRate_ = DEFAULT_SAMPLE_RATE;
     bool sampleLoaded_ = false;
-    
+
     // Voice management
     Voice* findFreeVoice();
     Voice* findVoiceForNote(int noteNumber);
     void startVoice(Voice* voice, int noteNumber, float velocity);
     void stopVoice(Voice* voice);
-    
+
     // Sample processing
     float getNextSample(Voice& voice);
     float calculatePitchRatio(int noteNumber);
-    
+
     // ADSR envelope
     float calculateEnvelope(Voice& voice);
     enum EnvelopePhase { Attack, Decay, Sustain, Release, Idle };
 };
+
+} // namespace neurato

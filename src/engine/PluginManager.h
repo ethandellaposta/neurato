@@ -40,14 +40,14 @@ public:
     std::vector<PluginInfo> getAvailablePlugins() const;
     std::vector<PluginInfo> getInstruments() const;
     std::vector<PluginInfo> getEffects() const;
-    
+
     // Plugin loading (UI thread only)
     std::unique_ptr<LoadedPlugin> loadPlugin(const juce::String& pluginId);
     void unloadPlugin(const juce::String& pluginId);
-    
+
     // Audio thread access
     LoadedPlugin* getPluginForAudio(const juce::String& pluginId) noexcept;
-    
+
     // Default instruments
     void loadDefaultInstruments();
     juce::String getDefaultPianoId() const { return "neurato.piano"; }
@@ -57,21 +57,21 @@ private:
     std::unique_ptr<juce::AudioPluginFormat> vst3Format;
     std::unique_ptr<juce::AudioPluginFormat> auFormat;
     std::unique_ptr<juce::AudioPluginFormat> vst2Format;
-    
+
     // Plugin list
     juce::KnownPluginList knownPlugins;
     std::vector<juce::AudioPluginFormat*> allFormats;
-    
+
     // Loaded plugins (UI thread owns, audio thread reads)
     std::unordered_map<juce::String, std::unique_ptr<LoadedPlugin>> loadedPlugins;
-    
+
     // Lock-free access for audio thread
     juce::Atomic<LoadedPlugin*> defaultPianoPlugin{nullptr};
-    
+
     // Scanning
     bool isScanning = false;
-    juce::ThreadWithProgressWindow scannerThread;
-    
+    std::unique_ptr<juce::ThreadWithProgressWindow> scannerThread;
+
     void initializeFormats();
     void createDefaultPiano();
     bool isPluginCompatible(const juce::PluginDescription& desc) const;
