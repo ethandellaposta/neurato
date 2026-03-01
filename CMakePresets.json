@@ -13,6 +13,7 @@
                 "CMAKE_CXX_STANDARD_REQUIRED": "ON",
                 "CMAKE_CXX_EXTENSIONS": "OFF",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "BUILD_TESTS": "ON",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++"
             },
@@ -34,6 +35,7 @@
                 "CMAKE_CXX_STANDARD_REQUIRED": "ON",
                 "CMAKE_CXX_EXTENSIONS": "OFF",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "OFF",
+                "BUILD_TESTS": "OFF",
                 "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "ON",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++"
@@ -56,6 +58,7 @@
                 "CMAKE_CXX_STANDARD_REQUIRED": "ON",
                 "CMAKE_CXX_EXTENSIONS": "OFF",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "BUILD_TESTS": "OFF",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++"
             },
@@ -77,6 +80,7 @@
                 "CMAKE_CXX_STANDARD_REQUIRED": "ON",
                 "CMAKE_CXX_EXTENSIONS": "OFF",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "OFF",
+                "BUILD_TESTS": "OFF",
                 "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "ON",
                 "CMAKE_UNITY_BUILD": "ON"
             }

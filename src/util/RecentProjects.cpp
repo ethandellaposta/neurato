@@ -1,11 +1,11 @@
-#include "util/RecentProjects.h"
+#include "util/RecentProjects.hpp"
 
-namespace neurato {
+namespace ampl {
 
 RecentProjects::RecentProjects()
 {
     auto appDataDir = juce::File::getSpecialLocation(
-        juce::File::userApplicationDataDirectory).getChildFile("Neurato");
+        juce::File::userApplicationDataDirectory).getChildFile("Ampl");
     appDataDir.createDirectory();
     storageFile_ = appDataDir.getChildFile("recent_projects.json");
     load();
@@ -80,4 +80,4 @@ void RecentProjects::save()
     storageFile_.replaceWithText(jsonString);
 }
 
-} // namespace neurato
+} // namespace ampl

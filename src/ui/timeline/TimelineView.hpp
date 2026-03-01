@@ -1,0 +1,146 @@
+#pragma once
+
+#include "engine/core/AudioEngine.hpp"
+#include "model/MidiClip.hpp"
+#include "model/Session.hpp"
+#include "ui/Theme.hpp"
+#include <juce_gui_basics/juce_gui_basics.h>
+#include <unordered_set>
+
+namespace ampl
+{
+
+// Renders the timeline: track lanes, clips with waveforms, playhead,
+// loop region markers, beat grid. Supports zoom and scroll (both axes).
+class TimelineView : public juce::Component
+{
+  public:
+    TimelineView(AudioEngine &engine, Session &session);
+    ~TimelineView() override;
+
+    void paint(juce::Graphics &g) override;
+    void resized() override;
+
+    // Called by parent to dispatch audio thread messages
+    void handleAudioMessage(const AudioToUIMessage &msg);
+
+    // Called by parent on timer tick to refresh display
+    void updateDisplay();
+
+    void mouseDown(const juce::MouseEvent &e) override;
+    void mouseDrag(const juce::MouseEvent &e) override;
+    void mouseUp(const juce::MouseEvent &e) override;
+    void mouseMove(const juce::MouseEvent &e) override;
+    void mouseExit(const juce::MouseEvent &e) override;
+    void mouseDoubleClick(const juce::MouseEvent &e) override;
+    void mouseWheelMove(const juce::MouseEvent &e, const juce::MouseWheelDetails &wheel) override;
+
+    // Zoom
+    void zoomIn();
+    void zoomOut();
+    void zoomToFit();
+    double getPixelsPerSample() const { return pixelsPerSample_; }
+
+    // Horizontal scroll (in samples)
+    void setScrollPositionSamples(SampleCount pos);
+    void centerOnPlayhead();
+    SampleCount getScrollPositionSamples() const { return scrollPositionSamples_; }
+
+    // Vertical scroll (in pixels)
+    void setVerticalScrollOffset(int offset);
+    int getVerticalScrollOffset() const { return verticalScrollOffset_; }
+    int getTotalContentHeight() const;
+
+    // Track selection
+    int getSelectedTrackIndex() const { return selectedTrackIndex_; }
+    void selectTrack(int trackIndex);
+    void selectNextTrack();
+    void selectPreviousTrack();
+
+    // Coordinate conversion
+    int sampleToPixelX(SampleCount sample) const;
+    SampleCount pixelXToSample(int pixelX) const;
+    int trackIndexAtY(int y) const;
+
+    // Layout constants
+    static constexpr int kTrackHeaderWidth = 140;
+    static constexpr int kTrackHeight = 80;
+    static constexpr int kRulerHeight = 28;
+    static constexpr int kScrollbarThickness = 10;
+
+    // Callbacks
+    std::function<void(SampleCount)> onSeek;
+    std::function<void()> onSessionChanged;
+    std::function<void(int, bool)> onTrackMuteRequested;
+    std::function<void(int, bool)> onTrackSoloRequested;
+    // (trackIndex, clipId, isMidi) — fired on double-click
+    std::function<void(int, juce::String, bool)> onClipDoubleClicked;
+
+  private:
+    void paintRuler(juce::Graphics &g, juce::Rectangle<int> area);
+    void paintTrackLane(juce::Graphics &g, juce::Rectangle<int> area, const TrackState &track,
+                        int trackIndex);
+    void paintClip(juce::Graphics &g, juce::Rectangle<int> area, const Clip &clip);
+    void paintMidiClip(juce::Graphics &g, juce::Rectangle<int> area, const MidiClip &clip);
+    void paintWaveform(juce::Graphics &g, juce::Rectangle<int> area, const Clip &clip);
+    void paintPlayhead(juce::Graphics &g);
+    void paintLoopRegion(juce::Graphics &g);
+    void paintScrollbars(juce::Graphics &g);
+
+    void clampVerticalScroll();
+    void ensureTrackVisible(int trackIndex);
+
+    AudioEngine &engine_;
+    Session &session_;
+
+    // View state
+    double pixelsPerSample_{0.01}; // Zoom level
+    SampleCount scrollPositionSamples_{0};
+    SampleCount playheadPositionSamples_{0};
+    int verticalScrollOffset_{0};
+    bool repaintPending_{true};
+    int selectedTrackIndex_{-1};
+    juce::String selectedClipId_;
+    juce::String hoveredClipId_;
+    bool hasShownClipActionHint_{false};
+    uint32_t fullHintVisibleUntilMs_{0};
+    std::unordered_set<std::string> mutedClipIds_;
+    std::unordered_set<std::string> lockedClipIds_;
+
+    // Scrollbar interaction
+    enum class ScrollbarDrag { None, Vertical, Horizontal };
+    ScrollbarDrag scrollbarDrag_{ScrollbarDrag::None};
+    int scrollbarDragStartOffset_{0};
+    int scrollbarDragStartMouse_{0};
+
+    // Interaction state
+    enum class DragMode
+    {
+        None,
+        Seeking,
+        MovingClip,
+        TrimLeft,
+        TrimRight,
+        Selecting
+    };
+    DragMode dragMode_{DragMode::None};
+    juce::String dragClipId_;
+    SampleCount dragStartSample_{0};
+    SampleCount dragClipOriginalStart_{0};
+    int dragTrackIndex_{-1};
+
+    // Waveform cache: per-clip peak data at current zoom level
+    struct WaveformCache
+    {
+        juce::String clipId;
+        double pixelsPerSample{0.0};
+        std::vector<float> peaks; // min/max interleaved
+    };
+    std::unordered_map<std::string, WaveformCache> waveformCaches_;
+
+    void generateWaveformPeaks(const Clip &clip, WaveformCache &cache, int widthPixels);
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TimelineView)
+};
+
+} // namespace ampl

@@ -1,7 +1,7 @@
-#include "commands/CommandManager.h"
-#include "model/Session.h"
+#include "commands/CommandManager.hpp"
+#include "model/Session.hpp"
 
-namespace neurato {
+namespace ampl {
 
 void CommandManager::execute(CommandPtr cmd, Session& session)
 {
@@ -72,4 +72,4 @@ void CommandManager::clear()
         onStateChanged();
 }
 
-} // namespace neurato
+} // namespace ampl

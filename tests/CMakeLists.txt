@@ -1,163 +1,106 @@
 cmake_minimum_required(VERSION 3.22)
 
-# Find required packages
 find_package(GTest REQUIRED)
-find_package(GMock REQUIRED)
 
-# Test executable
-add_executable(neurato_tests
-    TestSuite.cpp
-    UnitTests.cpp
+add_executable(ampl_e2e_tests
+    E2EWorkflows.cpp
+    E2EPhase3AI.cpp
+    ${CMAKE_SOURCE_DIR}/src/model/Session.cpp
+    ${CMAKE_SOURCE_DIR}/src/model/ProjectSerializer.cpp
+    ${CMAKE_SOURCE_DIR}/src/commands/CommandManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/render/OfflineRenderer.cpp
+    ${CMAKE_SOURCE_DIR}/src/ai/AIComponents.cpp
+    ${CMAKE_SOURCE_DIR}/src/ai/AIImplementation.cpp
+    ${CMAKE_SOURCE_DIR}/src/ai/MixAssistant.cpp
+    ${CMAKE_SOURCE_DIR}/src/ui/panels/mixer/TrackInfoPanel.cpp
+    ${CMAKE_SOURCE_DIR}/src/ui/Theme.cpp
 )
 
-# Include directories
-target_include_directories(neurato_tests PRIVATE
+target_include_directories(ampl_e2e_tests PRIVATE
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/tests
-    ${GTEST_INCLUDE_DIRS}
-    ${GMOCK_INCLUDE_DIRS}
 )
 
-# Link libraries
-target_link_libraries(neurato_tests PRIVATE
+target_link_libraries(ampl_e2e_tests PRIVATE
     GTest::gtest
-    GTest::gmock
     GTest::gtest_main
-    neurato_core
-    neurato_engine
-    neurato_ai
-    neurato_model
-    neurato_ui
-    neurato_util
     juce::juce_audio_basics
-    juce::juce_audio_processors
+    juce::juce_audio_formats
     juce::juce_core
+    juce::juce_events
+    juce::juce_graphics
+    juce::juce_gui_basics
 )
 
-# Enable testing
+target_compile_definitions(ampl_e2e_tests PRIVATE
+    JUCE_WEB_BROWSER=0
+    JUCE_USE_CURL=0
+)
+
+# Real I/O integration tests (MIDI, Audio, VST/AU plugins)
+add_executable(ampl_real_io_tests
+    e2e/RealIOTests.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/io/ExternalIOManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/core/AudioEngine.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/core/Transport.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/core/Metronome.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/core/AudioTrack.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/render/SessionRenderer.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/render/OfflineRenderer.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/manager/PluginManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/instruments/PianoSynth.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/host/PluginHost.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/host/SandboxHost.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/graph/AudioGraph.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/graph/Automation.cpp
+    ${CMAKE_SOURCE_DIR}/src/engine/graph/AudioProcessors.cpp
+    ${CMAKE_SOURCE_DIR}/src/model/Session.cpp
+    ${CMAKE_SOURCE_DIR}/src/model/ProjectSerializer.cpp
+    ${CMAKE_SOURCE_DIR}/src/commands/CommandManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/ai/AIComponents.cpp
+    ${CMAKE_SOURCE_DIR}/src/ai/AIImplementation.cpp
+    ${CMAKE_SOURCE_DIR}/src/ai/MixAssistant.cpp
+    ${CMAKE_SOURCE_DIR}/src/ui/panels/mixer/TrackInfoPanel.cpp
+    ${CMAKE_SOURCE_DIR}/src/ui/Theme.cpp
+)
+
+target_include_directories(ampl_real_io_tests PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/tests
+)
+
+target_link_libraries(ampl_real_io_tests PRIVATE
+    GTest::gtest
+    GTest::gtest_main
+    juce::juce_audio_basics
+    juce::juce_audio_devices
+    juce::juce_audio_formats
+    juce::juce_audio_processors
+    juce::juce_audio_utils
+    juce::juce_core
+    juce::juce_events
+    juce::juce_graphics
+    juce::juce_gui_basics
+    juce::juce_gui_extra
+)
+
+target_compile_definitions(ampl_real_io_tests PRIVATE
+    JUCE_WEB_BROWSER=0
+    JUCE_USE_CURL=0
+    JUCE_PLUGINHOST_VST3=1
+    JUCE_PLUGINHOST_AU=1
+    JUCE_PLUGINHOST_VST2=0
+    AMPL_ENABLE_AUTOMATION=1
+    AMPL_ENABLE_AUDIO_GRAPH=1
+    AMPL_ENABLE_AI=1
+    AMPL_ENABLE_LOCAL_INFERENCE=1
+    AMPL_ENABLE_SANDBOX=1
+    AMPL_ENABLE_LOGIC_FEATURES=1
+    AMPL_ENABLE_ADVANCED_MIXER=1
+    AMPL_ENABLE_VCA_GROUPS=1
+    AMPL_ENABLE_FLEX_TIME=1
+)
+
 enable_testing()
-
-# Add test cases
-add_test(NAME UnitTests COMMAND neurato_tests)
-
-# Performance tests
-add_test(NAME PerformanceTests COMMAND neurato_tests --gtest_filter="*Performance*")
-set_tests_properties(PerformanceTests PROPERTIES TIMEOUT 300)
-
-# Stress tests  
-add_test(NAME StressTests COMMAND neurato_tests --gtest_filter="*Stress*")
-set_tests_properties(StressTests PROPERTIES TIMEOUT 600)
-
-# Integration tests
-add_test(NAME IntegrationTests COMMAND neurato_tests --gtest_filter="*Integration*")
-set_tests_properties(IntegrationTests PROPERTIES TIMEOUT 120)
-
-# AI tests (may require model files)
-add_test(NAME AITests COMMAND neurato_tests --gtest_filter="*AI*")
-set_tests_properties(AITests PROPERTIES TIMEOUT 180)
-
-# Set up test data
-add_custom_target(test_data
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/test_data
-    COMMAND python3 ${CMAKE_SOURCE_DIR}/tests/generate_test_data.py ${CMAKE_BINARY_DIR}/test_data
-    COMMENT "Generating test data"
-)
-
-# Make tests depend on test data
-add_dependencies(neurato_tests test_data)
-
-# Code coverage (if available)
-option(ENABLE_COVERAGE "Enable code coverage" OFF)
-if(ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(neurato_tests PRIVATE --coverage)
-    target_link_options(neurato_tests PRIVATE --coverage)
-    
-    add_custom_target(coverage
-        COMMAND lcov --capture --directory ${CMAKE_BINARY_DIR} --output-file coverage.info
-        COMMAND lcov --remove coverage.info '/usr/*' --output-file coverage.info
-        COMMAND lcov --list coverage.info
-        COMMAND genhtml coverage.info --output-directory ${CMAKE_BINARY_DIR}/coverage
-        COMMENT "Generating code coverage report"
-    )
-endif()
-
-# Memory checking (if valgrind available)
-find_program(VALGRIND_EXECUTABLE valgrind)
-if(VALGRIND_EXECUTABLE)
-    add_test(NAME MemoryTests COMMAND ${VALGRIND_EXECUTABLE} --leak-check=full --error-exitcode=1 neurato_tests)
-    set_tests_properties(MemoryTests PROPERTIES TIMEOUT 600)
-endif()
-
-# Benchmark tests
-add_executable(neurato_benchmarks
-    TestSuite.cpp
-    UnitTests.cpp
-)
-
-target_compile_definitions(neurato_benchmarks PRIVATE
-    BENCHMARK_MODE=1
-)
-
-target_link_libraries(neurato_benchmarks PRIVATE
-    ${CMAKE_SOURCE_DIR}/external/benchmark/libbenchmark.a
-    neurato_core
-    neurato_engine
-    neurato_ai
-    neurato_model
-    neurato_ui
-    neurato_util
-    juce::juce_audio_basics
-    juce::juce_audio_processors
-    juce::juce_core
-)
-
-add_custom_target(benchmarks
-    COMMAND neurato_benchmarks --benchmark_format=json --benchmark_out=${CMAKE_BINARY_DIR}/benchmark_results.json
-    COMMENT "Running performance benchmarks"
-)
-
-# Fuzz testing (if available)
-option(ENABLE_FUZZING "Enable fuzz testing" OFF)
-if(ENABLE_FUZZING AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_executable(neurato_fuzzer
-        fuzz/audio_graph_fuzzer.cpp
-        fuzz/automation_fuzzer.cpp
-        fuzz/plugin_host_fuzzer.cpp
-    )
-    
-    target_compile_options(neurato_fuzzer PRIVATE
-        -fsanitize=fuzzer,address
-        -g
-    )
-    
-    target_link_options(neurato_fuzzer PRIVATE
-        -fsanitize=fuzzer,address
-    )
-    
-    target_link_libraries(neurato_fuzzer PRIVATE
-        neurato_core
-        neurato_engine
-        neurato_ai
-        neurato_model
-        neurato_ui
-        neurato_util
-    )
-    
-    add_custom_target(fuzz
-        COMMAND neurato_fuzzer -max_len=4096 -dict=fuzz/dictionary.txt
-        COMMENT "Running fuzz tests"
-    )
-endif()
-
-# Continuous integration support
-if(CI_BUILD)
-    # Set strict test failure policies
-    set_tests_properties(UnitTests PROPERTIES PASS_REGULAR_EXPRESSION ".*")
-    set_tests_properties(IntegrationTests PROPERTIES PASS_REGULAR_EXPRESSION ".*")
-    
-    # Generate test reports
-    add_custom_target(test_report
-        COMMAND neurato_tests --gtest_output=xml:${CMAKE_BINARY_DIR}/test_results.xml
-        COMMENT "Generating test report"
-    )
-endif()
+add_test(NAME AmplE2E COMMAND ampl_e2e_tests)
+add_test(NAME AmplRealIO COMMAND ampl_real_io_tests)

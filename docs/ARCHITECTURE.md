@@ -1,4 +1,4 @@
-# Neurato — System Architecture
+# Ampl — System Architecture
 
 ## Module Overview
 

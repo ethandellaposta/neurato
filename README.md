@@ -1,4 +1,4 @@
-# Neurato — AI-First DAW
+# Ampl — AI-First DAW
 
 A native, cross-platform, ultra-performant DAW with AI as a first-class workflow.
 
@@ -18,7 +18,7 @@ A native, cross-platform, ultra-performant DAW with AI as a first-class workflow
 
 ### Milestone 3 ✅ Project Persistence & Offline Bounce
 
-- Project file format (.neurato JSON + relative audio asset paths)
+- Project file format (.ampl JSON + relative audio asset paths)
 - Save / Save As / Open with versioning
 - Offline bounce (faster-than-realtime) WAV export with progress dialog
 - Recent projects list, audio file browser, file/view menus
@@ -107,6 +107,74 @@ A native, cross-platform, ultra-performant DAW with AI as a first-class workflow
 - **Mixer Toolbar**: Quick access to view options, track creation, and zoom controls
 - **Real-Time Meters**: Peak, RMS, and LUFS metering with customizable ballistics
 
+## Repository Structure
+
+```
+ampl/
+├── src/                          # Main source code
+│   ├── app/                      # Application entry point
+│   │   └── Main.cpp              # Main application class
+│   ├── engine/                   # Audio engine core
+│   │   ├── AudioEngine.cpp       # Main audio engine
+│   │   ├── Transport.cpp         # Play/stop/loop control
+│   │   ├── Metronome.cpp         # Metronome implementation
+│   │   ├── AudioTrack.cpp        # Track audio processing
+│   │   ├── SessionRenderer.cpp   # Real-time rendering
+│   │   ├── OfflineRenderer.cpp   # Export rendering
+│   │   ├── PluginManager.cpp     # Plugin management
+│   │   ├── PianoSynth.cpp        # MIDI synthesis
+│   │   ├── AudioGraph.cpp        # Processing graph
+│   │   ├── Automation.cpp        # Parameter automation
+│   │   ├── AudioProcessors.cpp   # Built-in effects
+│   │   ├── PluginHost.cpp        # Plugin hosting
+│   │   ├── SandboxHost.cpp       # Plugin sandboxing
+│   │   └── LogicFeatures.cpp     # Logic Pro X features
+│   ├── ai/                       # AI/ML components
+│   │   ├── AIComponents.cpp      # AI core components
+│   │   ├── AIImplementation.cpp  # AI implementation details
+│   │   └── MixAssistant.cpp      # AI mixing assistant
+│   ├── model/                    # Data models
+│   │   ├── Session.cpp           # Project session model
+│   │   └── ProjectSerializer.cpp # Save/load functionality
+│   ├── commands/                 # Command pattern
+│   │   └── CommandManager.cpp    # Undo/redo system
+│   ├── ui/                       # User interface
+│   │   ├── TransportBar.cpp      # Transport controls
+│   │   ├── TrackView.cpp         # Track display
+│   │   ├── TimelineView.cpp      # Timeline interaction
+│   │   ├── AudioSettingsPanel.cpp # Audio device settings
+│   │   ├── AudioFileBrowser.cpp  # File browser
+│   │   ├── BounceProgressDialog.cpp # Export progress
+│   │   ├── MixerPanel.cpp        # Mixer interface
+│   │   ├── PianoRollEditor.cpp   # MIDI editing
+│   │   ├── AudioClipEditor.cpp   # Audio editing
+│   │   └── Theme.cpp             # UI theming
+│   └── util/                     # Utilities
+│       └── RecentProjects.cpp    # Recent projects list
+├── tests/                        # Test suite
+│   ├── unit/                     # Unit tests
+│   ├── integration/              # Integration tests
+│   └── generate_test_data.py     # Test data generator
+├── docs/                         # Documentation
+│   ├── ARCHITECTURE.md           # System architecture
+│   ├── MILESTONES.md             # Development roadmap
+│   ├── API.md                    # API documentation
+│   └── AI.md                     # AI features guide
+├── assets/                       # Application assets
+│   └── Ampl.icns                 # Application icon
+├── CMakeLists.txt                # Build configuration
+└── README.md                     # This file
+```
+
+## Key Module Documentation
+
+- **[Usage Guide](docs/usage/README.md)** - Build, launch, and common day-to-day workflows
+- **[Audio Engine](docs/ENGINE.md)** - Core audio processing architecture
+- **[AI Layer](docs/AI.md)** - Machine learning integration and APIs
+- **[Plugin System](docs/PLUGINS.md)** - VST3/AU hosting and sandboxing
+- **[UI Architecture](docs/UI.md)** - Component-based UI design
+- **[Command System](docs/COMMANDS.md)** - Undo/redo and command pattern
+
 ## Build Instructions
 
 ### Prerequisites
@@ -154,159 +222,38 @@ cmake --build build/release
 ctest --test-dir build/debug --output-on-failure
 ```
 
+### VS Code Actions (Tasks)
+
+All CMake build commands are available as VS Code tasks.
+
+- Open Command Palette → `Tasks: Run Task`
+- Run any of these actions:
+    - `Configure Debug`, `Configure Release`, `Configure RelWithDebInfo`, `Configure CI`
+    - `Build Debug`, `Build Release`, `Build RelWithDebInfo`, `Build CI`, `Build Verbose Debug`
+    - `Build + Open Ampl (Debug)`, `Build + Open Ampl (Release)`
+    - `Run Ampl (Debug)`, `Run Ampl (Release)`
+    - `Open Ampl.app (Debug)`, `Open Ampl.app (Release)`
+    - `Clean Debug`, `Clean Release`, `Clean RelWithDebInfo`
+    - `Install Debug`, `Install Release`, `Install RelWithDebInfo`
+    - `Run Tests (Debug)`, `Run Tests (Release)`
+    - `Full Clean and Rebuild (Debug)`, `Reset Debug CMake Cache`
+
 ### Run
 
 #### macOS
 
 ```bash
-open build/debug/Neurato_artefacts/Debug/Neurato.app
+open build/debug/Ampl_artefacts/Debug/Ampl.app
 ```
 
 #### Linux
 
 ```bash
-./build/debug/Neurato_artefacts/Debug/Neurato
+./build/debug/Ampl_artefacts/Debug/Ampl
 ```
 
 #### Windows
 
 ```bash
-build\debug\Neurato_artefacts\Debug\Neurato.exe
+build\debug\Ampl_artefacts\Debug\Ampl.exe
 ```
-
-## AI Features
-
-Neurato includes a comprehensive AI layer that enhances the audio production workflow:
-
-### Command Palette
-
-Press `Cmd+Shift+P` (or `Ctrl+Shift+P` on Windows/Linux) to open the command palette:
-
-- **Natural Language Commands**: Type "create a new track" or "add reverb to vocals"
-- **AI Suggestions**: Get context-aware suggestions based on your session
-- **Traditional Commands**: Access all menu items and keyboard shortcuts
-
-### Mix Assistant
-
-The AI-powered mix assistant helps you achieve professional-sounding mixes:
-
-- **Automatic Gain Staging**: Suggests optimal track levels for target LUFS
-- **EQ Recommendations**: Analyzes frequency content and suggests EQ adjustments
-- **Dynamic Range Control**: Recommends compression settings based on audio analysis
-- **Learning System**: Adapts to your mixing preferences over time
-
-### Automation & Analysis
-
-- **Smart Automation**: Generate automation curves from audio analysis
-- **Transient Detection**: Automatically detect transients for beat grid alignment
-- **Audio Analysis**: RMS, peak, spectral analysis, and more
-- **Preview System**: See AI suggestions before applying them
-
-### Local Inference
-
-All AI processing runs locally on your machine:
-
-- **Privacy**: No audio data leaves your computer
-- **Offline Capability**: Works without internet connection
-- **Custom Models**: Support for ONNX, llama.cpp, and custom models
-- **Performance**: Optimized for real-time audio processing
-
-## Keyboard Shortcuts
-
-| Key           | Action        |
-| ------------- | ------------- |
-| Space         | Play / Stop   |
-| Cmd+Z         | Undo          |
-| Cmd+Shift+Z   | Redo          |
-| Cmd+N         | New Project   |
-| Cmd+O         | Open Project  |
-| Cmd+S         | Save Project  |
-| Cmd+E         | Export Audio  |
-| Cmd+M         | Toggle Mixer  |
-| Cmd+= / Cmd+- | Zoom In / Out |
-| Cmd+0         | Zoom to Fit   |
-| Escape        | Close Editor  |
-
-## Usage Instructions
-
-### Getting Started (Milestone 1)
-
-1. **Launch** the app (see Build/Run above).
-2. **Audio Settings** — click the "Audio Settings" button (or File → Audio Settings) to select your audio output device and sample rate.
-3. **Transport** — press **Space** to play/stop. Adjust BPM in the transport bar. Toggle the metronome on/off and set its gain.
-4. **Peak Meters** — observe real-time L/R peak levels in the transport bar during playback.
-
-### Timeline & Editing (Milestone 2)
-
-1. **Add Tracks** — click **+ Track** to create new audio tracks.
-2. **Import Audio** — click **Load Audio** or use the audio file browser sidebar to import WAV, AIFF, MP3, FLAC, or OGG files. Audio is placed as a clip on the first track.
-3. **Timeline Navigation**
-    - **Zoom**: Cmd+= / Cmd+- or scroll wheel with Cmd held. Cmd+0 zooms to fit all content.
-    - **Scroll**: horizontal scroll to navigate the timeline.
-    - **Seek**: click on the timeline ruler to move the playhead.
-4. **Clip Editing** (non-destructive)
-    - **Move clips**: drag a clip left/right on the timeline to reposition it.
-    - **Trim**: drag clip edges to adjust start/end points.
-    - **Gain/Fade**: adjust per-clip gain, fade-in, and fade-out via the clip properties.
-5. **Undo/Redo** — Cmd+Z / Cmd+Shift+Z, or use the Undo/Redo toolbar buttons. All clip and track edits are undoable.
-
-### Project Persistence & Export (Milestone 3)
-
-1. **Save Project** — Cmd+S (or File → Save). Projects are saved as `.neurato` JSON files with relative audio asset paths.
-2. **Save As** — File → Save As to save to a new location.
-3. **Open Project** — Cmd+O (or File → Open) to load a `.neurato` project file.
-4. **New Project** — Cmd+N (or File → New Project). If you have unsaved changes, you'll be prompted to discard or cancel.
-5. **Recent Projects** — File → Recent Projects shows your recently opened projects.
-6. **Export Audio** — Cmd+E (or File → Export Audio) to bounce the session to a WAV file. A progress dialog shows rendering status with a cancel button. Rendering is faster-than-realtime.
-7. **Audio File Browser** — click the **Files** toolbar button (or View → Toggle File Browser) to open a sidebar for browsing and importing audio files. Double-click a file to import it.
-8. **Window Title** — shows the project name and a `*` prefix when there are unsaved changes.
-
-### Multi-Track & Mixer (Milestone 4)
-
-1. **Multiple Tracks** — click **+ Track** to add as many audio tracks as needed. Each track can hold multiple clips on the timeline.
-2. **Toggle Mixer** — press **Cmd+M** or use View → Toggle Mixer to show/hide the mixer panel at the bottom of the window.
-3. **Channel Strips** — each track gets a channel strip in the mixer with:
-    - **Gain slider** (vertical, -60 dB to +12 dB)
-    - **Pan knob** (rotary, full left to full right)
-    - **M button** — mute the track (red when active)
-    - **S button** — solo the track (yellow when active). When any track is soloed, only soloed tracks are heard.
-    - **X button** — remove the track (cannot remove the last track)
-4. **Master Bus** — the rightmost strip in the mixer controls the master output gain and pan. All tracks are summed through the master bus before output.
-5. **All mixer changes are undoable** — gain, pan, mute, solo, and track removal all go through the command system and can be undone with Cmd+Z.
-6. **Export respects mixer state** — bouncing to WAV applies all track gain/pan/mute/solo settings and the master bus, so the exported file matches what you hear.
-7. **Project save includes mixer state** — master gain and pan are persisted in the `.neurato` project file.
-
-### MIDI Tracks & Editors (Milestone 4.5)
-
-1. **Add MIDI Track** — click **+ MIDI Track** in the toolbar to create a MIDI track. MIDI tracks are visually distinct from audio tracks on the timeline.
-2. **Piano Roll Editor** — double-click a MIDI clip on the timeline to open the Piano Roll Editor in the bottom panel:
-    - **Keyboard sidebar** — shows note names (C, C#, D, etc.) with octave labels
-    - **Note grid** — displays MIDI notes as colored rectangles; snap-to-grid for precise placement
-    - **Velocity lane** — bottom strip shows per-note velocity bars; drag to adjust
-    - **Tools**: Draw (pencil), Select (pointer), Move, Resize, Erase — click the tool buttons or use the grid directly
-    - **All edits are undoable** — adding, moving, resizing, deleting notes all go through the command system
-3. **Audio Clip Editor** — double-click an audio clip to open the Audio Clip Editor:
-    - **Zoomed waveform** — detailed view of the clip's audio
-    - **Gain handle** — drag to adjust clip gain
-    - **Fade handles** — drag fade-in/fade-out markers
-    - **Trim** — adjust clip boundaries
-4. **Close Editor** — press **Escape** to close the editor panel.
-5. **MIDI Playback** — MIDI tracks are synthesized in real-time using a built-in polyphonic sine synth with attack/release envelope. MIDI notes play back during transport playback.
-6. **MIDI in Project Files** — MIDI tracks, clips, and notes are fully serialized in the `.neurato` project file (format v2, backward-compatible with v1 audio-only projects).
-
-## Architecture
-
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full system architecture.
-
-## Thread Model
-
-| Thread       | RT-Safe? | Allocations? |
-| ------------ | -------- | ------------ |
-| Audio Thread | YES      | NONE         |
-| UI Thread    | No       | Yes          |
-
-Communication between threads uses lock-free SPSC queues only. No mutexes on the audio path.
-
-## Roadmap
-
-See [docs/MILESTONES.md](docs/MILESTONES.md) for the full implementation plan.

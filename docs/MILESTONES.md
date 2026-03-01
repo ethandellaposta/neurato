@@ -1,4 +1,4 @@
-# Neurato — Implementation Milestones
+# Ampl — Implementation Milestones
 
 Each milestone ends in a **runnable application**.
 
@@ -34,7 +34,7 @@ Each milestone ends in a **runnable application**.
 - [x] Project file format (JSON metadata + audio asset references)
 - [x] Save/load with versioning
 - [x] Offline bounce (faster-than-realtime) to WAV with progress dialog
-- [x] Recent projects list (persisted to ~/Library/Application Support/Neurato)
+- [x] Recent projects list (persisted to ~/Library/Application Support/Ampl)
 - [x] Audio file browser panel (toggle sidebar)
 - [x] File menu bar (New/Open/Recent/Save/Save As/Export/Audio Settings)
 - [x] Window title with project name + dirty state indicator

@@ -1,7 +1,7 @@
-# Neurato — AI-First DAW: Product Spec
+# Ampl — AI-First DAW: Product Spec
 
 ## Vision
-Neurato is a native, cross-platform DAW where AI is a first-class workflow — not a chatbot bolted onto a traditional DAW. Every AI action is deterministic, reversible, and previewed before application.
+Ampl is a native, cross-platform DAW where AI is a first-class workflow — not a chatbot bolted onto a traditional DAW. Every AI action is deterministic, reversible, and previewed before application.
 
 ---
 
@@ -58,7 +58,7 @@ Neurato is a native, cross-platform DAW where AI is a first-class workflow — n
 - "Write a pad that supports the chorus" — generative audio via local models
 - Collaborative editing (CRDT-based)
 - Video sync track
-- Custom plugin format (Neurato Native Plugins)
+- Custom plugin format (Ampl Native Plugins)
 - Marketplace for AI models and presets
 
 ---

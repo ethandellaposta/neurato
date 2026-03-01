@@ -1,7 +1,7 @@
-# Neurato — Repository Structure
+# Ampl — Repository Structure
 
 ```
-neurato/
+ampl/
 ├── CMakeLists.txt                  # Root CMake — fetches JUCE, defines targets
 ├── CMakePresets.json               # Build presets (Debug, Release, per-platform)
 ├── README.md                       # Build instructions + overview
